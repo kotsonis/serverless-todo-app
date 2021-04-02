@@ -1,0 +1,28 @@
+language: node_js
+node_js:
+  - "lts/*"
+
+deploy_service_job: &DEPLOY_SERVICE_JOB
+  cache:
+    directories:
+      - node_modules
+      - ${SERVICE_PATH}/node_modules
+
+  install:
+    - npm install -g serverless
+    - travis_retry npm install
+    - cd ${SERVICE_PATH}
+    - travis_retry npm install
+    - cd -
+
+  script:
+    - cd ${SERVICE_PATH}
+    - serverless deploy -s ${TRAVIS_BRANCH}
+    - cd -
+
+jobs:
+  include:
+    - <<: *DEPLOY_SERVICE_JOB
+      name: "Deploy Backend API"
+      env:
+        - SERVICE_PATH="backend"

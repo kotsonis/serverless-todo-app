@@ -29,6 +29,7 @@ const createTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
     userId: user,
     todoId: id,
     timestamp: creationTime,
+    done: false,
     ...parsedBody
   }
   logger.info('Ready to add item: ', newItem)

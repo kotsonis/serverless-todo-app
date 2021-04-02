@@ -42,7 +42,7 @@ const createTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
   return {
     statusCode: 201,
     body: JSON.stringify({
-      newItem
+      item: newItem
     })
   }
 }

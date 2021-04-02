@@ -1,6 +1,8 @@
 import type { AWS } from '@serverless/typescript';
 
 import getTodos from '@functions/http/getTodos';
+import createTodo from '@functions/http/createTodo';
+
 import auth0Authorizer from '@functions/auth/auth0Authorizer'
 // import todosTable from 'src/resources/dynamoDb'
 
@@ -35,7 +37,8 @@ const serverlessConfiguration: AWS = {
   // import the function via paths
   functions: { 
     getTodos,
-    auth0Authorizer },
+    auth0Authorizer,
+    createTodo },
   resources: {
     Resources: {
       TodosTable: {

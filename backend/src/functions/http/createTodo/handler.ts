@@ -1,23 +1,28 @@
 import 'source-map-support/register';
 import { middyfy } from '@libs/lambda';
 import { createLogger } from '@libs/logger'
-import type { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from "aws-lambda"
+import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda"
 import * as AWS  from 'aws-sdk'
 import * as uuid from 'uuid'
 import { getUserId } from '@libs/getUserId';
+import type { FromSchema } from "json-schema-to-ts";
 
 const logger = createLogger('createTodo')
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 
 import { CreateTodoRequest } from '@interfaces/CreateTodoRequest'
+import schema from './schema';
 
+type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> }
+type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>
 
-const createTodo: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const createTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   logger.info('Processing event: ', event)
   const id = uuid.v4()
   const user = getUserId(event)
-  const parsedBody: CreateTodoRequest = JSON.parse(event.body)
+  logger.info(`for user ${user}`)
+  const parsedBody:CreateTodoRequest = <CreateTodoRequest> event.body
 
   const newItem = {
     userId: user,

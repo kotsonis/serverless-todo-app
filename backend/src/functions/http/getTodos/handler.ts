@@ -11,10 +11,9 @@ const todosTable = process.env.TODOS_TABLE
 
 const getTodos: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // TODO: Get all TODO items for a current user
-    const userId = getUserId(event);
-    logger.info('Retrieving TODO items for user ', userId);
+    const userId = await getUserId(event);
+    logger.info(`Retrieving TODO items for user ${userId}`);
     const todos = await getTodosPerUser(userId);
-    logger.info('Retrieved TODOs for User');
     return {
         statusCode: 201,
         body: JSON.stringify({
@@ -24,15 +23,14 @@ const getTodos: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Pr
 }
 
   async function getTodosPerUser(userId: string) {
+    logger.info(`searching in table ${todosTable}`)
     const result = await docClient.query({
       TableName: todosTable,
-      KeyConditionExpression: 'userId = :userId',
+      KeyConditionExpression: 'userId = :user',
       ExpressionAttributeValues: {
-        ':userId': userId
+        ':user': userId
       },
-      ScanIndexForward: false
     }).promise()
-  
     return result.Items
   }
 

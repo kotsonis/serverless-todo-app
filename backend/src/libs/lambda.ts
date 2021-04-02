@@ -5,5 +5,5 @@ import cors from '@middy/http-cors'
 export const middyfy = (handler) => {
   return middy(handler)
          .use(middyJsonBodyParser())
-         .user(cors())
+         .use(cors())
 }

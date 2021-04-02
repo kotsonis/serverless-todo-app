@@ -20,6 +20,7 @@ type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEve
 const createTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   logger.info('Processing event: ', event)
   const id = uuid.v4()
+  const creationTime = new Date().toISOString()
   const user = getUserId(event)
   logger.info(`for user ${user}`)
   const parsedBody:CreateTodoRequest = <CreateTodoRequest> event.body
@@ -27,6 +28,7 @@ const createTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
   const newItem = {
     userId: user,
     todoId: id,
+    timestamp: creationTime,
     ...parsedBody
   }
   logger.info('Ready to add item: ', newItem)

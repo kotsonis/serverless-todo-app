@@ -6,7 +6,7 @@ export default {
   events: [
     {
       http: {
-        method: "put",
+        method: "post",
         path: "todos",
         cors: true,
         authorizer: "auth0Authorizer",

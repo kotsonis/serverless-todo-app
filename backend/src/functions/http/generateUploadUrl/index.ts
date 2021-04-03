@@ -30,7 +30,7 @@ export default {
         's3:putObject',
         's3:getObject'
       ],
-      Resource: ["arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*"]
+      Resource: ["arn:aws:s3:::${self:provider.environment.TODOS_S3_BUCKET}/*"]
     },
   ],
 };

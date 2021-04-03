@@ -90,7 +90,7 @@ async function todoExists(todoItem: string, user: string) {
     .promise()
 
   logger.info('Got todo Item: ', result)
-  return !!result.Item
+  return !!result
 }
 
 export const main = middyfy(generateUploadUrl);

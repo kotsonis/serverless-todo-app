@@ -17,10 +17,11 @@ export default {
       Effect: "Allow",
       Action: [
         "dynamodb:UpdateItem",
-        "dynamodb:GetItem",
+        "dynamodb:Query",
       ],
       Resource: [
         "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
+        "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_ID_INDEX}"
       ],
       
     },

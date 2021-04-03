@@ -36,13 +36,13 @@ const generateUploadUrl: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
       })
     }
   }
-
+  const bucketKey = `${todoId}/${fname}`
   logger.info(`Found user ${user} and todo item ${todoId}`)
 
-  const revisedTodoItem = updateTodoItem(todoId, user,fname)
+  const revisedTodoItem = updateTodoItem(todoEntry.Items[0].timestamp, user,bucketKey)
   logger.info(`Revised TODO item`, revisedTodoItem)
 
-  const uploadUrl = getUploadUrl(todoId, fname)
+  const uploadUrl = getUploadUrl(bucketKey)
   logger.info(`generated upload URL ${uploadUrl}`)
   return {
     statusCode: 201,
@@ -52,14 +52,13 @@ const generateUploadUrl: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
   }
 }
 
-async function updateTodoItem(user: string, todoId: string, filename: string) {
-  const url = `https://${bucketName}.s3.amazonaws.com/${todoId}/${filename}`
+async function updateTodoItem(sortKey: string, user: string, bucketKey: string) {
+  const url = `https://${bucketName}.s3.amazonaws.com/${bucketKey}`
   var dbParams = {
     TableName: todosTable,
-    IndexName: todoIndex,
     Key: {
       userId: user,
-      todoId: todoId
+      timestamp: sortKey
     },
     UpdateExpression: "set attachmentUrl = :u",
     ExpressionAttributeValues:{
@@ -73,12 +72,12 @@ async function updateTodoItem(user: string, todoId: string, filename: string) {
     .promise()
   return result
 }
-function getUploadUrl(todoId: string, filename: string) {
+function getUploadUrl(bucketKey: string) {
   return s3.getSignedUrl(
     'putObject', 
     {
       Bucket: bucketName,
-      Key: `${todoId}/${filename}`,
+      Key: bucketKey,
       Expires: urlExpiration
     })
 }

@@ -9,7 +9,7 @@ const logger = createLogger('generateUploadUrl')
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 const todoIndex = process.env.TODO_ID_INDEX
-const bucketName = process.env.IMAGES_S3_BUCKET
+const bucketName = process.env.TODOS_S3_BUCKET
 const s3 = new AWS.S3({
   signatureVersion: 'v4'
 });

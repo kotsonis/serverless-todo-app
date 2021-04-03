@@ -86,6 +86,7 @@ export async function deleteItem(sortKey: string, user: string) {
       userId: user,
       timestamp: sortKey
     },
+    ReturnValues: 'ALL_OLD'
   }
   logger.info('Getting ready to delete database entry with these params')
   logger.info(dbParams)

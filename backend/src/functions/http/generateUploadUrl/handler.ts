@@ -8,6 +8,7 @@ import { getUserId } from '@libs/getUserId';
 const logger = createLogger('generateUploadUrl')
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
+const todoIndex = process.env.TODO_ID_INDEX
 const bucketName = process.env.IMAGES_S3_BUCKET
 const s3 = new AWS.S3({
   signatureVersion: 'v4'
@@ -49,6 +50,7 @@ async function updateTodoItem(user: string, todoId: string) {
   const url = `https://${bucketName}.s3.amazonaws.com/${todoId}`
   var dbParams = {
     TableName: todosTable,
+    IndexName: todoIndex,
     Key: {
       userId: user,
       todoId: todoId
@@ -76,16 +78,18 @@ function getUploadUrl(todoId: string) {
 }
 async function todoExists(todoItem: string, user: string) {
   const result = await docClient
-    .get({
+    .query({
       TableName: todosTable,
-      Key: {
-        userId: user,
-        todoId: todoItem
+      IndexName: todoIndex,
+      KeyConditionExpression: "userId = :user and todoId = :id",
+      ExpressionAttributeValues: {
+        ":user": user,
+        ":id": todoItem
       }
     })
     .promise()
 
-  logger.info('Get todo Item: ', result)
+  logger.info('Got todo Item: ', result)
   return !!result.Item
 }
 

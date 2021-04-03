@@ -33,15 +33,15 @@ const deleteTodos: APIGatewayProxyHandler = async (
   const todoEntry = todoQuery.Items[0]
   // check if an S3 bucket was created for this item and delete if so
   if (todoEntry.hasOwnProperty('attachmentUrl')) {
+    logger.info('will be deleting S3 bucket')
     deleteBucket(todoEntry.attachmentUrl)
   }
   logger.info('database entry to delete', todoEntry)
   // delete the todo entry
   const timestamp = todoEntry.timestamp
 
-  
   try {
-      await deleteItem(timestamp, user)
+      deleteItem(timestamp, user)
   } catch (e) {
       logger.info('Got error',e)
   }

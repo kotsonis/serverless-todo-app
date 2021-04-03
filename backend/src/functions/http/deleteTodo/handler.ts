@@ -39,7 +39,12 @@ const deleteTodos: APIGatewayProxyHandler = async (
   // delete the todo entry
   const timestamp = todoEntry.timestamp
 
-  await deleteItem(timestamp, user)
+  
+  try {
+      await deleteItem(timestamp, user)
+  } catch (e) {
+      logger.info('Got error',e)
+  }
   
   return {
       statusCode: 200,

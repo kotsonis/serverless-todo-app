@@ -20,9 +20,9 @@ const generateUploadUrl: APIGatewayProxyHandler = async (event:APIGatewayProxyEv
   const user = getUserId(event)
   const todoId = event.pathParameters.todoId
   logger.info(`Ready to generate upload URL for item ${todoId}`)
-  const validtodoId = await todoExists(todoId, user)
+  const todoEntry = await todoExists(todoId, user)
 
-  if (!validtodoId) {
+  if (todoEntry.Count === 0) {
     logger.info(`Got invalid todoId ${todoId} for user ${user}`)
     return {
       statusCode: 404,
@@ -31,6 +31,7 @@ const generateUploadUrl: APIGatewayProxyHandler = async (event:APIGatewayProxyEv
       })
     }
   }
+
   logger.info(`Found user ${user} and todo item ${todoId}`)
 
   const revisedTodoItem = updateTodoItem(todoId, user)
@@ -90,7 +91,7 @@ async function todoExists(todoItem: string, user: string) {
     .promise()
 
   logger.info('Got todo Item: ', result)
-  return !!result
+  return result
 }
 
 export const main = middyfy(generateUploadUrl);

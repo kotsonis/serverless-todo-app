@@ -91,5 +91,11 @@ export async function deleteItem(sortKey: string, user: string) {
   logger.info(dbParams)
   const result = await docClient.update(dbParams)
     .promise()
+    .then((data) => {
+      logger.info('Deleted entry with following return',data)
+    })
+    .catch((err) => {
+      logger.info('Delete failed with following error',err)
+    })
   return result
 }

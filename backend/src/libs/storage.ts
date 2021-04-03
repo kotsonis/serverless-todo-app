@@ -25,6 +25,7 @@ export function getUploadUrl(bucketKey: string) {
 export async function deleteBucket(bucketKey: string) {
   let re = /.*amazonaws\.com\/(.*)/i
   let match = re.exec(bucketKey)
+  logger.info('Getting ready to delete bucket',match)
   logger.info(`Extracted ${match.groups[1]} out of ${bucketKey}`)
   var params = {
     Bucket: bucketName,

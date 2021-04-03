@@ -2,9 +2,9 @@ import type { AWS } from '@serverless/typescript';
 
 import getTodos from '@functions/http/getTodos';
 import createTodo from '@functions/http/createTodo';
-
+import generateUploadUrl from '@functions/http/generateUploadUrl'
 import auth0Authorizer from '@functions/auth/auth0Authorizer'
-// import todosTable from 'src/resources/dynamoDb'
+import {BucketPolicy, AttachmentsBucket} from 'src/resources/s3'
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-todo-app',
@@ -30,7 +30,9 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       TODOS_TABLE: "Todos-${self:provider.stage}", 
-      TODO_ID_INDEX: "Todo-index${self:provider.stage}"
+      TODO_ID_INDEX: "Todo-index${self:provider.stage}",
+      TODOS_S3_BUCKET: "Todo-s3-bucket-q3w21-{self:provider.stage}"
+
     },
     lambdaHashingVersion: '20201221',
   },
@@ -38,7 +40,8 @@ const serverlessConfiguration: AWS = {
   functions: { 
     getTodos,
     auth0Authorizer,
-    createTodo },
+    createTodo,
+    generateUploadUrl },
   resources: {
     Resources: {
       TodosTable: {
@@ -89,7 +92,9 @@ const serverlessConfiguration: AWS = {
           },
         ],
       },
-    }
+    },
+    AttachmentsBucket,
+    BucketPolicy 
   },
 }
 };

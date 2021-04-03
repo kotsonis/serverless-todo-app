@@ -58,11 +58,10 @@ async function updateTodoItem(user: string, todoId: string) {
     },
     ReturnValues:"UPDATED_NEW"
   }
+  logger.info('Getting ready to update database with these params')
+  logger.info(dbParams)
   const result = await docClient.update(dbParams)
     .promise()
-    .catch((e) => {
-      logger.info('Failed to update item in db. Got exception',e)
-    })
   return result
 }
 function getUploadUrl(todoId: string) {

@@ -31,7 +31,7 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       TODOS_TABLE: "Todos-${self:provider.stage}", 
       TODO_ID_INDEX: "Todo-index${self:provider.stage}",
-      TODOS_S3_BUCKET: "Todo-s3-bucket-q3w21-${self:provider.stage}"
+      TODOS_S3_BUCKET: "todo-s3-bucket-q3w21-${self:provider.stage}"
 
     },
     lambdaHashingVersion: '20201221',

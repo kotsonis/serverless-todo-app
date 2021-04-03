@@ -17,6 +17,7 @@ export default {
       Action: [
         "dynamodb:UpdateItem",
         "dynamodb:Query",
+        "dynamodb:Delete"
       ],
       Resource: [
         "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
@@ -28,7 +29,8 @@ export default {
       Effect: 'Allow',
       Action: [
         's3:putObject',
-        's3:deleteObject'
+        's3:getObject',
+        's3:deleteBucket'
       ],
       Resource: ["arn:aws:s3:::${self:provider.environment.TODOS_S3_BUCKET}/*"]
     },

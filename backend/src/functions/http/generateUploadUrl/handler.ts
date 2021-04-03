@@ -1,9 +1,10 @@
 import 'source-map-support/register';
 import { middyfy } from '@libs/lambda';
 import { createLogger } from '@libs/logger'
-import type { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from "aws-lambda"
+import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda"
 import * as AWS  from 'aws-sdk'
 import { getUserId } from '@libs/getUserId';
+import type { FromSchema } from "json-schema-to-ts";
 
 const logger = createLogger('generateUploadUrl')
 const docClient = new AWS.DynamoDB.DocumentClient()
@@ -14,13 +15,17 @@ const s3 = new AWS.S3({
   signatureVersion: 'v4'
 });
 const urlExpiration = +process.env.SIGNED_URL_EXPIRATION
+import schema from './schema';
+type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> }
+type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>
 
-const generateUploadUrl: APIGatewayProxyHandler = async (event:APIGatewayProxyEvent): Promise<APIGatewayProxyResult>  =>{
+const generateUploadUrl: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   logger.info('Processing event: ', event)
   const user = getUserId(event)
   const todoId = event.pathParameters.todoId
   logger.info(`Ready to generate upload URL for item ${todoId}`)
   const todoEntry = await todoExists(todoId, user)
+  const fname = event.body.file
 
   if (todoEntry.Count === 0) {
     logger.info(`Got invalid todoId ${todoId} for user ${user}`)
@@ -34,10 +39,10 @@ const generateUploadUrl: APIGatewayProxyHandler = async (event:APIGatewayProxyEv
 
   logger.info(`Found user ${user} and todo item ${todoId}`)
 
-  const revisedTodoItem = updateTodoItem(todoId, user)
+  const revisedTodoItem = updateTodoItem(todoId, user,fname)
   logger.info(`Revised TODO item`, revisedTodoItem)
 
-  const uploadUrl = getUploadUrl(todoId)
+  const uploadUrl = getUploadUrl(todoId, fname)
   logger.info(`generated upload URL ${uploadUrl}`)
   return {
     statusCode: 201,
@@ -47,8 +52,8 @@ const generateUploadUrl: APIGatewayProxyHandler = async (event:APIGatewayProxyEv
   }
 }
 
-async function updateTodoItem(user: string, todoId: string) {
-  const url = `https://${bucketName}.s3.amazonaws.com/${todoId}`
+async function updateTodoItem(user: string, todoId: string, filename: string) {
+  const url = `https://${bucketName}.s3.amazonaws.com/${todoId}/${filename}`
   var dbParams = {
     TableName: todosTable,
     IndexName: todoIndex,
@@ -68,12 +73,12 @@ async function updateTodoItem(user: string, todoId: string) {
     .promise()
   return result
 }
-function getUploadUrl(todoId: string) {
+function getUploadUrl(todoId: string, filename: string) {
   return s3.getSignedUrl(
     'putObject', 
     {
       Bucket: bucketName,
-      Key: todoId,
+      Key: `${todoId}/${filename}`,
       Expires: urlExpiration
     })
 }

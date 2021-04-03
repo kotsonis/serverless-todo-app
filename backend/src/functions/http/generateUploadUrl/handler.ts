@@ -5,7 +5,7 @@ import type { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandle
 import * as AWS  from 'aws-sdk'
 import { getUserId } from '@libs/getUserId';
 
-const logger = createLogger('createTodo')
+const logger = createLogger('generateUploadUrl')
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 const bucketName = process.env.IMAGES_S3_BUCKET
@@ -18,6 +18,7 @@ const generateUploadUrl: APIGatewayProxyHandler = async (event:APIGatewayProxyEv
   logger.info('Processing event: ', event)
   const user = getUserId(event)
   const todoId = event.pathParameters.todoId
+  logger.info(`Ready to generate upload URL for item ${todoId}`)
   const validtodoId = await todoExists(todoId, user)
 
   if (!validtodoId) {

@@ -30,7 +30,7 @@ export default {
       Action: [
         's3:putObject',
         's3:getObject',
-        's3:deleteBucket'
+        's3:DeleteObject'
       ],
       Resource: ["arn:aws:s3:::${self:provider.environment.TODOS_S3_BUCKET}/*"]
     },

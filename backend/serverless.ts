@@ -35,9 +35,9 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      TODOS_TABLE: "${self:custom.todoTableSecret}${self:provider.stage}", 
+      TODOS_TABLE: "${self:custom.todoTableSecret.todoTable}${self:provider.stage}", 
       TODO_ID_INDEX: "Todo-index${self:provider.stage}",
-      TODOS_S3_BUCKET: "${self:custom.todoS3BucketSecret}${self:provider.stage}"
+      TODOS_S3_BUCKET: "${self:custom.todoS3BucketSecret.s3endpoint}${self:provider.stage}"
 
     },
     lambdaHashingVersion: '20201221',

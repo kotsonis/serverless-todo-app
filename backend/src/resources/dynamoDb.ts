@@ -30,6 +30,24 @@ const TodosTable = {
           },
         ],
         BillingMode: "PAY_PER_REQUEST",
+        LocalSecondaryIndexes: [
+          {
+            IndexName: "${self:provider.environment.TODO_ID_INDEX}",
+            KeySchema: [
+              {
+                AttributeName: "userId",
+                KeyType: "HASH"
+              },
+              {
+                AttributeName: "todoId",
+                KeyType: "RANGE"
+              }
+            ],
+            Projection: {
+              ProjectionType: "ALL",
+            }
+          }
+        ]
       },
 };
 export {TodosTable}

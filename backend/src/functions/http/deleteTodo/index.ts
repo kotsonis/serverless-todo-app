@@ -17,7 +17,7 @@ export default {
       Action: [
         "dynamodb:UpdateItem",
         "dynamodb:Query",
-        "dynamodb:Delete"
+        "dynamodb:DeleteItem"
       ],
       Resource: [
         "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",

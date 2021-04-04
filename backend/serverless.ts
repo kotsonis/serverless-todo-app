@@ -11,6 +11,7 @@ import updateTodo from '@functions/http/updateTodo'
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-todo-app',
+  variablesResolutionMode: "20210326",
   frameworkVersion: '2',
   custom: {
     webpack: {

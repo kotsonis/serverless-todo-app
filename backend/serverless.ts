@@ -5,7 +5,7 @@ import createTodo from '@functions/http/createTodo';
 import generateUploadUrl from '@functions/http/generateUploadUrl'
 import auth0Authorizer from '@functions/auth/auth0Authorizer'
 import {BucketPolicy, AttachmentsBucket} from '@resources/s3'
-import {todosTable} from '@resources/dynamoDb'
+import {TodosTable} from '@resources/dynamoDb'
 import deleteTodo from '@functions/http/deleteTodo'
 import updateTodo from '@functions/http/updateTodo'
 
@@ -15,6 +15,8 @@ const serverlessConfiguration: AWS = {
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
+      todoTableSecret: "${ssm:/aws/reference/secretsmanager/todo/dynamo/table}",
+      todoS3BucketSecret: "${ssm:/aws/reference/secretsmanager/todo/s3/bucket}",
       includeModules: true,
     },
   },
@@ -32,9 +34,9 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      TODOS_TABLE: "Todos-${self:provider.stage}", 
+      TODOS_TABLE: "${self:custom.todoTableSecret}${self:provider.stage}", 
       TODO_ID_INDEX: "Todo-index${self:provider.stage}",
-      TODOS_S3_BUCKET: "todo-s3-bucket-q3w21-${self:provider.stage}"
+      TODOS_S3_BUCKET: "${self:custom.todoS3BucketSecret}${self:provider.stage}"
 
     },
     lambdaHashingVersion: '20201221',

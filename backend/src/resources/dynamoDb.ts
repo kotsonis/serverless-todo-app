@@ -1,4 +1,7 @@
-const todosTable = {
+/** 
+ * AWS DynamoDB table declaration for storing todo Items
+ */
+const TodosTable = {
       Type: "AWS::DynamoDB::Table",
       Properties: {
         TableName: "${self:provider.environment.TODOS_TABLE}",
@@ -29,4 +32,4 @@ const todosTable = {
         BillingMode: "PAY_PER_REQUEST",
       },
 };
-export {todosTable}
+export {TodosTable}

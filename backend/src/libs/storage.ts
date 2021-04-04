@@ -29,7 +29,7 @@ export async function deleteBucket(bucketKey: string) {
   logger.info(`Extracted ${match[1]} out of ${bucketKey}`)
   var params = {
     Bucket: bucketName,
-    Key: match.groups[1],
+    Key: match[1],
   };
   const result = await s3
     .deleteObject(params)

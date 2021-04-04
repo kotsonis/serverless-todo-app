@@ -90,7 +90,7 @@ export async function deleteItem(sortKey: string, user: string) {
   }
   logger.info('Getting ready to delete database entry with these params')
   logger.info(dbParams)
-  const result = await docClient.update(dbParams)
+  const result = await docClient.delete(dbParams)
     .promise()
     .then((data) => {
       logger.info('Deleted entry with following return',data)

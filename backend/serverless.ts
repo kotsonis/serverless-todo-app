@@ -18,8 +18,7 @@ const serverlessConfiguration: AWS = {
       webpackConfig: './webpack.config.js',
       includeModules: true,
     },
-    todoTableSecret: "${ssm:/aws/reference/secretsmanager/todo/dynamo/table}",  
-    todoS3BucketSecret: "${ssm:/aws/reference/secretsmanager/todo/s3/bucket}",
+    todoSecrets: "${ssm:/aws/reference/secretsmanager/todo/app}",  
   },
   plugins: [
     'serverless-webpack',
@@ -35,9 +34,9 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      TODOS_TABLE: "${self:custom.todoTableSecret.todoTable}${self:provider.stage}", 
-      TODO_ID_INDEX: "Todo-index${self:provider.stage}",
-      TODOS_S3_BUCKET: "${self:custom.todoS3BucketSecret.s3endpoint}${self:provider.stage}"
+      TODOS_TABLE: "${self:custom.todoSecrets.table}${self:provider.stage}", 
+      TODO_ID_INDEX: "${self:custom.todoSecrets.todoIndex}${self:provider.stage}",
+      TODOS_S3_BUCKET: "${self:custom.todoSecrets.s3Endpoint}${self:provider.stage}"
 
     },
     lambdaHashingVersion: '20201221',

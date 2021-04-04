@@ -16,10 +16,10 @@ const serverlessConfiguration: AWS = {
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
-      todoTableSecret: "${ssm:/aws/reference/secretsmanager/todo/dynamo/table}",
-      todoS3BucketSecret: "${ssm:/aws/reference/secretsmanager/todo/s3/bucket}",
       includeModules: true,
     },
+    todoTableSecret: "${ssm:/aws/reference/secretsmanager/todo/dynamo/table}",  
+    todoS3BucketSecret: "${ssm:/aws/reference/secretsmanager/todo/s3/bucket}",
   },
   plugins: [
     'serverless-webpack',

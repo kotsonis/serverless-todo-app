@@ -4,7 +4,8 @@ import getTodos from '@functions/http/getTodos';
 import createTodo from '@functions/http/createTodo';
 import generateUploadUrl from '@functions/http/generateUploadUrl'
 import auth0Authorizer from '@functions/auth/auth0Authorizer'
-import {BucketPolicy, AttachmentsBucket} from 'src/resources/s3'
+import {BucketPolicy, AttachmentsBucket} from '@resources/s3'
+import {todosTable} from '@resources/dynamoDb'
 import deleteTodo from '@functions/http/deleteTodo'
 import updateTodo from '@functions/http/updateTodo'
 
@@ -48,55 +49,7 @@ const serverlessConfiguration: AWS = {
     updateTodo },
   resources: {
     Resources: {
-      TodosTable: {
-      Type: "AWS::DynamoDB::Table",
-      Properties: {
-        TableName: "${self:provider.environment.TODOS_TABLE}",
-        AttributeDefinitions: [
-          {
-            AttributeName: "userId",
-            AttributeType: "S",
-          },
-          {
-            AttributeName: "timestamp",
-            AttributeType: "S",
-          },
-          {
-            AttributeName: "todoId",
-            AttributeType: "S",
-          },
-        ],
-        KeySchema: [
-          {
-            AttributeName: "userId",
-            KeyType: "HASH",
-          },
-          {
-            AttributeName: "timestamp",
-            KeyType: "RANGE",
-          },
-        ],
-        BillingMode: "PAY_PER_REQUEST",
-        LocalSecondaryIndexes: [
-          {
-            IndexName: "${self:provider.environment.TODO_ID_INDEX}",
-            KeySchema: [
-              {
-                AttributeName: "userId",
-                KeyType: "HASH",
-              },
-              {
-                AttributeName: "todoId",
-                KeyType: "RANGE",
-              },
-            ],
-            Projection: {
-              ProjectionType: "ALL",
-            },
-          },
-        ],
-      },
-    },
+      TodosTable,
     
     AttachmentsBucket,
     BucketPolicy 

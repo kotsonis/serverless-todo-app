@@ -73,7 +73,27 @@ export async function updateItemUrl(sortKey: string, user: string, bucketKey: st
     .promise()
   return result
 }
-
+export async function updateItemStatus(sortKey: string, user: string, newStatus: boolean) {
+  const url = `https://${bucketName}.s3.amazonaws.com/${bucketKey}`
+  
+  var dbParams = {
+    TableName: todosTable,
+    Key: {
+      userId: user,
+      timestamp: sortKey
+    },
+    UpdateExpression: "set done = :newDone",
+    ExpressionAttributeValues:{
+      ":newDone":newStatus
+    },
+    ReturnValues:"UPDATED_NEW"
+  }
+  logger.info('Getting ready to update database with these params')
+  logger.info(dbParams)
+  const result = await docClient.update(dbParams)
+    .promise()
+  return result
+}
 /**
  * delete a todo item from the datbase
  * @param sortKey - the timestamp

@@ -6,6 +6,7 @@ import generateUploadUrl from '@functions/http/generateUploadUrl'
 import auth0Authorizer from '@functions/auth/auth0Authorizer'
 import {BucketPolicy, AttachmentsBucket} from 'src/resources/s3'
 import deleteTodo from '@functions/http/deleteTodo'
+import updateTodos from `@functions/http/updateTodos`
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-todo-app',
@@ -43,7 +44,8 @@ const serverlessConfiguration: AWS = {
     auth0Authorizer,
     createTodo,
     generateUploadUrl,
-    deleteTodo },
+    deleteTodo,
+    updateTodos },
   resources: {
     Resources: {
       TodosTable: {

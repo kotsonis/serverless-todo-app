@@ -2,11 +2,13 @@ export default {
     type: "object",
     properties: {
       name: { type: 'string' },
-      dueDate: {type: 'string'}
+      dueDate: {type: 'string'},
+      done: {type: 'boolean'}
     },
     required: [
       'name', 
-      'dueDate'
+      'dueDate',
+      'done'
     ]
   } as const;
   

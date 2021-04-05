@@ -12,14 +12,15 @@
   "dependencies": {
     "@middy/core": "^1.5.2",
     "@middy/http-cors": "^2.0.0",
+    "@middy/http-error-handler": "^2.0.0",
     "@middy/http-json-body-parser": "^1.5.2",
     "@types/axios": "^0.14.0",
     "axios": "^0.21.1",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.0.2",
     "middy": "^0.36.0",
-    "source-map-support": "^0.5.19",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "source-map-support": "^0.5.19"
   },
   "devDependencies": {
     "@serverless/typescript": "^2.32.0",

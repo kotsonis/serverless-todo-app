@@ -1,17 +1,24 @@
 import type { AWS } from '@serverless/typescript';
 
 import getTodos from '@functions/http/getTodos';
+import createTodo from '@functions/http/createTodo';
+import generateUploadUrl from '@functions/http/generateUploadUrl'
 import auth0Authorizer from '@functions/auth/auth0Authorizer'
-// import todosTable from 'src/resources/dynamoDb'
+import {BucketPolicy, AttachmentsBucket} from '@resources/s3'
+import {TodosTable} from '@resources/dynamoDb'
+import deleteTodo from '@functions/http/deleteTodo'
+import updateTodo from '@functions/http/updateTodo'
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-todo-app',
+  variablesResolutionMode: "20210326",
   frameworkVersion: '2',
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true,
     },
+    todoSecrets: "${ssm:/aws/reference/secretsmanager/todo/app}",  
   },
   plugins: [
     'serverless-webpack',
@@ -27,66 +34,28 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      TODOS_TABLE: "Todos-${self:provider.stage}", 
-      TODO_ID_INDEX: "Todo-index${self:provider.stage}"
+      TODOS_TABLE: "${self:custom.todoSecrets.tableName}${self:provider.stage}", 
+      TODO_ID_INDEX: "${self:custom.todoSecrets.todoIndex}${self:provider.stage}",
+      TODOS_S3_BUCKET: "${self:custom.todoSecrets.s3Endpoint}${self:provider.stage}",
+      JWKS: "${self:custom.todoSecrets.jwksUrl}"
+
     },
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
   functions: { 
     getTodos,
-    auth0Authorizer },
+    auth0Authorizer,
+    createTodo,
+    generateUploadUrl,
+    deleteTodo,
+    updateTodo },
   resources: {
     Resources: {
-      TodosTable: {
-      Type: "AWS::DynamoDB::Table",
-      Properties: {
-        TableName: "${self:provider.environment.TODOS_TABLE}",
-        AttributeDefinitions: [
-          {
-            AttributeName: "userId",
-            AttributeType: "S",
-          },
-          {
-            AttributeName: "timestamp",
-            AttributeType: "S",
-          },
-          {
-            AttributeName: "todoId",
-            AttributeType: "S",
-          },
-        ],
-        KeySchema: [
-          {
-            AttributeName: "userId",
-            KeyType: "HASH",
-          },
-          {
-            AttributeName: "timestamp",
-            KeyType: "RANGE",
-          },
-        ],
-        BillingMode: "PAY_PER_REQUEST",
-        LocalSecondaryIndexes: [
-          {
-            IndexName: "${self:provider.environment.TODO_ID_INDEX}",
-            KeySchema: [
-              {
-                AttributeName: "userId",
-                KeyType: "HASH",
-              },
-              {
-                AttributeName: "todoId",
-                KeyType: "RANGE",
-              },
-            ],
-            Projection: {
-              ProjectionType: "ALL",
-            },
-          },
-        ],
-      },
-    }
+      TodosTable,
+    
+    AttachmentsBucket,
+    BucketPolicy 
   },
 }
 };

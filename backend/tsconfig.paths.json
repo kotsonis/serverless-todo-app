@@ -3,7 +3,9 @@
     "baseUrl": ".",
     "paths": {
       "@functions/*": ["src/functions/*"],
-      "@libs/*": ["src/libs/*"]
+      "@libs/*": ["src/libs/*"],
+      "@resources/*": ["src/resources/*"],
+      "@interfaces/*": ["src/interfaces/*"]
     }
   }
 }

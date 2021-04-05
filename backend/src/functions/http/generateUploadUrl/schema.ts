@@ -1,12 +1,10 @@
 export default {
     type: "object",
     properties: {
-      name: { type: 'string' },
-      dueDate: {type: 'string'}
+      file: { type: 'string' },
     },
     required: [
-      'name', 
-      'dueDate'
+      'file', 
     ]
   } as const;
   

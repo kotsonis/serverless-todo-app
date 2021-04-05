@@ -4,6 +4,7 @@
  * - request checking versus schema from APIGateway
  * - iamRoles per lambda function
  */
+
 import { handlerPath } from '@libs/handlerResolver';
 import schema from './schema';
 
@@ -12,8 +13,8 @@ export default {
   events: [
     {
       http: {
-        method: "post",
-        path: "todos",
+        method: "patch",
+        path: "todos/{todoId}",
         cors: true,
         authorizer: "auth0Authorizer",
         request: {
@@ -27,10 +28,15 @@ export default {
   iamRoleStatements: [
     {
       Effect: "Allow",
-      Action: ["dynamodb:PutItem"],
+      Action: [
+        "dynamodb:UpdateItem",
+        "dynamodb:Query",
+      ],
       Resource: [
         "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
+        "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_ID_INDEX}"
       ],
+      
     },
   ],
 };

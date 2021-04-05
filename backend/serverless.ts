@@ -32,6 +32,10 @@ const serverlessConfiguration: AWS = {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
+    tracing: {
+      lambda: true,
+      apiGateway: true
+    },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       TODOS_TABLE: "${self:custom.todoSecrets.tableName}${self:provider.stage}", 

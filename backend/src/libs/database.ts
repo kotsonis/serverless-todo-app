@@ -8,8 +8,15 @@ const docClient = new AWS.DynamoDB.DocumentClient()
 
 const todosTable = process.env.TODOS_TABLE
 const todoIndex = process.env.TODO_ID_INDEX
-
 const bucketName = process.env.TODOS_S3_BUCKET
+
+export async function createItem(newItem: AWS.DynamoDB.DocumentClient.PutItemInput) {
+  const result = await docClient.put({
+    TableName: todosTable,
+    Item: newItem
+  }).promise()
+  return result
+}
 
 export async function getItems(userId: string) {
   logger.info(`searching in table ${todosTable}`)
@@ -73,9 +80,15 @@ export async function updateItemUrl(sortKey: string, user: string, bucketKey: st
     .promise()
   return result
 }
+
+/**
+ * Updates the database entry with new done status
+ * @param {string} sortKey  the timestamp
+ * @param {string} user  the userId
+ * @param {boolean} newStatus the updated status of the todo  
+ * @returns 
+ */
 export async function updateItemStatus(sortKey: string, user: string, newStatus: boolean) {
-  const url = `https://${bucketName}.s3.amazonaws.com/${bucketKey}`
-  
   var dbParams = {
     TableName: todosTable,
     Key: {
@@ -94,8 +107,9 @@ export async function updateItemStatus(sortKey: string, user: string, newStatus:
     .promise()
   return result
 }
+
 /**
- * delete a todo item from the datbase
+ * delete a todo item from the database
  * @param sortKey - the timestamp
  * @param user - the primary key
  */

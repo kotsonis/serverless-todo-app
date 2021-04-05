@@ -1,3 +1,6 @@
+/**
+ * AWS S3 bucket declaration for serverless/cloudfront
+ */
 const AttachmentsBucket = {
     Type: "AWS::S3::Bucket",
     Properties: {
@@ -14,6 +17,10 @@ const AttachmentsBucket = {
       },
     },
   };
+
+/**
+ * AWS S3 Bucket policy which makes GetObject public
+ */
 const BucketPolicy = {
     Type: "AWS::S3::BucketPolicy",
     Properties: {

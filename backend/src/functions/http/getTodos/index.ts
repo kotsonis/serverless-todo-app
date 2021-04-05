@@ -1,3 +1,8 @@
+/**
+ * Creates the serverless functions entry for this function
+ * Implements:
+ * - iamRoles per lambda function
+ */
 import { handlerPath } from '@libs/handlerResolver';
 
 export default {

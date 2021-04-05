@@ -9,11 +9,16 @@ import { getItem, updateItemStatus } from '@libs/database';
 
 const logger = createLogger('createTodo')
 
+// parse the event.body according to schema
 import schema from './schema';
-
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> }
 type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>
 
+/**
+ * lambda function to update todo status
+ * @param event which should contain the new done status in body.done and itemId in path
+ * @returns an empty 200 answer
+ */
 const updateTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const user = getUserId(event);
   const todoId = event.pathParameters.todoId;

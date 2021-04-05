@@ -1,3 +1,9 @@
+/**
+ * Creates the serverless functions entry for this function
+ * Implements:
+ * - request checking versus schema from APIGateway
+ * - iamRoles per lambda function
+ */
 import { handlerPath } from '@libs/handlerResolver';
 import schema from './schema';
 export default {

@@ -2,14 +2,12 @@ import 'source-map-support/register';
 import { middyfy } from '@libs/lambda';
 import { createLogger } from '@libs/logger'
 import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda"
-import * as AWS  from 'aws-sdk'
 import * as uuid from 'uuid'
 import { getUserId } from '@libs/getUserId';
 import type { FromSchema } from "json-schema-to-ts";
+import {createItem} from `@libs/database`
 
 const logger = createLogger('createTodo')
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
 
 import { CreateTodoRequest } from '@interfaces/CreateTodoRequest'
 import schema from './schema';
@@ -34,11 +32,8 @@ const createTodo: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
   }
   logger.info('Ready to add item: ', newItem)
   
-  await docClient.put({
-    TableName: todosTable,
-    Item: newItem
-  }).promise()
-
+  await createItem(newItem);
+  
   return {
     statusCode: 201,
     body: JSON.stringify({

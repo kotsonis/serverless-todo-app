@@ -14,6 +14,11 @@ import schema from './schema';
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> };
 type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>;
 
+/**
+ * lambda function to generate a signedUrl from s3 for client to upload image
+ * @param event - which should contain the filename under body.file and todoId in the query
+ * @returns a JSON with the signedUrl to which client can upload the image
+ */
 const generateUploadUrl: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const user = getUserId(event);
   const todoId = event.pathParameters.todoId;
@@ -46,6 +51,6 @@ const generateUploadUrl: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
     })
   };
 };
-
+// wrap this handler around the middy middleware
 export const main = middyfy(generateUploadUrl);
 

@@ -1,7 +1,9 @@
 export default {
     type: "object",
     properties: {
-      name: { type: 'string' },
+      name: { 
+        type: 'string',
+      pattern: '^(?!\s*$).+' },
       dueDate: {type: 'string'}
     },
     required: [

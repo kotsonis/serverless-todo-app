@@ -3,8 +3,9 @@ import * as AWS  from 'aws-sdk'
 
 import { createLogger } from '@libs/logger'
 const logger = createLogger('database')
-
-const docClient = new AWS.DynamoDB.DocumentClient()
+import { captureAWS } from "aws-xray-sdk-core";
+var XAWS = captureAWS(AWS);
+const docClient = new XAWS.DynamoDB.DocumentClient()
 
 const todosTable = process.env.TODOS_TABLE
 const todoIndex = process.env.TODO_ID_INDEX

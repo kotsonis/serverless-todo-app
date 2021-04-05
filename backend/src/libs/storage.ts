@@ -1,10 +1,12 @@
 import * as AWS from "aws-sdk";
 import { createLogger } from "./logger";
 
+import { captureAWS } from "aws-xray-sdk-core";
+var XAWS = captureAWS(AWS);
 // get bucket Name from serverless ENV (which got it from AWS Secrets Manager)
 const bucketName = process.env.TODOS_S3_BUCKET;
 const urlExpiration = 900; //use default of 900 seconds, which means 15 minutes window to upload the file
-const s3 = new AWS.S3({
+const s3 = new XAWS.S3({
   signatureVersion: "v4",
 });
 

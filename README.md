@@ -198,7 +198,48 @@ Prior to executing this function, the defintion of our function for serverless i
 * User is **authorized**
 * Request **body conforms** to our [schema.ts](backend/src/functions/http/createTodo/schema.ts)
 * Function has appropriate **iamRole** to put items in the database
-
+### validating the create request
+We check that a valid name has been provided for a todo item both at the client side and the backend.
+#### On the client side
+We match the name to a regex that accepts everything except a space or blank name. This is done in [Todos.tsx](client/src/components/Todos.tsx) on the `onTodoCreate` function as follows:
+```typescript
+onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
+    try {
+      if (/^(?!\s*$).+/.test(this.state.newTodoName) === false) {
+        alert('Please enter a name for this todo item')
+        return 
+      }
+      const dueDate = this.calculateDueDate()
+      const newTodo = await createTodo(this.props.auth.getIdToken(), {
+        name: this.state.newTodoName,
+        dueDate
+      })
+      this.setState({
+        todos: [...this.state.todos, newTodo],
+        newTodoName: ''
+      })
+    } catch {
+      alert('Todo creation failed')
+    }
+  }
+```
+#### On the backend side
+Our [schema.ts](backend/src/functions/http/createTodo/schema.ts) checks that `name` is non-empty by matching it to the pattern as follows:
+```typescript
+export default {
+    type: "object",
+    properties: {
+      name: { 
+        type: 'string',
+      pattern: '^(?!\s*$).+' },
+      dueDate: {type: 'string'}
+    },
+    required: [
+      'name', 
+      'dueDate'
+    ]
+  } as const;
+```
 ## `UpdateTodo` Function - update a TODO item
 The `updateTodo` lambda function is provided in [handler.ts](/backend/src/functions/http/updateTodo/handler.ts).
 
@@ -274,3 +315,41 @@ Prior to executing this function, the defintion of our function for serverless i
   * query and update items in the database
   * put objects on the s3 data store
 
+
+## Debugging / tracing our application
+We use [AWS X-Ray](https://aws.amazon.com/xray/) to trace calls to the AWS services.
+Implementing this requires installation of the [aws-xray-sdk](https://www.npmjs.com/package/aws-xray-sdk) library, and then to replace our calls to AWS services as follows:
+<table>
+<tr>
+<td> Standard </td> <td> With X-Ray tracing </td>
+</tr>
+<tr>
+<td> 
+
+```typescript
+import * as AWS  from 'aws-sdk' 
+const docClient = new AWS.DynamoDB.DocumentClient()
+  ...
+const s3 = new AWS.S3({
+  signatureVersion: "v4",
+});
+```
+</td>
+<td>
+
+```typescript
+import * as AWS  from 'aws-sdk' 
+import { captureAWS } from "aws-xray-sdk-core"; 
+var XAWS = captureAWS(AWS);
+const docClient = new XAWS.DynamoDB.DocumentClient()
+  ...
+const s3 = new XAWS.S3({
+  signatureVersion: "v4",
+});
+```
+</td>
+</tr>
+</table>
+
+Once we deploy and use our service with X-Ray enabled, we can obtain a service map on the aws console as per below example:
+![x-ray screenshot](images/AWS_Xray.png)

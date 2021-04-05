@@ -5,7 +5,7 @@ import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-l
 import * as uuid from 'uuid'
 import { getUserId } from '@libs/getUserId';
 import type { FromSchema } from "json-schema-to-ts";
-import {createItem} from `@libs/database`
+import {createItem} from '@libs/database'
 
 const logger = createLogger('createTodo')
 
